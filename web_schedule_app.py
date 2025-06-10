@@ -41,14 +41,13 @@ def generate_pdf(data):
     pdf.set_font("Arial", "", 12)
     pdf.ln(5)
 
-    for i, row in enumerate(data):
+    for row in data:
         line = f"{row['date']} - {row['time_in']} to {row['time_out']} = {row['duration']} minutes"
         pdf.cell(0, 10, line, ln=True)
 
-    buffer = BytesIO()
-    pdf.output(buffer)
-    buffer.seek(0)
-    return buffer
+    # Proper in-memory PDF output
+    pdf_bytes = pdf.output(dest='S').encode('latin1')  # <- Important fix
+    return BytesIO(pdf_bytes)
 
 def generate_excel(data):
     wb = Workbook()
