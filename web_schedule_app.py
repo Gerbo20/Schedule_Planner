@@ -14,13 +14,20 @@ st.write("App started successfully")
 # === Helper Functions ===
 
 def parse_time(time_str):
+    time_str = time_str.strip().lower().replace(" ", "")
     try:
-        return datetime.strptime(time_str.strip(), "%I:%M%p")
-    except ValueError:
-        try:
-            return datetime.strptime(time_str.strip(), "%H:%M")
-        except:
-            return None
+        return datetime.strptime(time_str, "%I%p")         # e.g., "12pm"
+    except:
+        pass
+    try:
+        return datetime.strptime(time_str, "%I:%M%p")      # e.g., "12:00pm"
+    except:
+        pass
+    try:
+        return datetime.strptime(time_str, "%H:%M")        # e.g., "12:00" (24hr)
+    except:
+        pass
+    return None
 
 def get_minutes(start, end):
     delta = end - start
