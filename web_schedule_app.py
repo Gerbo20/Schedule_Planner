@@ -85,8 +85,8 @@ st.caption("⏱️ Time Format: Use 12-hour (e.g., 9:00AM or 4:30PM) or 24-hour 
 
 schedule_data = []
 date_range = st.date_input("Select Date Range", [datetime.today(), datetime.today() + timedelta(days=5)])
-
-use_typical = st.checkbox("Use Typical Hours for Weekdays?")
+use_typical = st.checkbox("✅ Use Typical Hours for Weekdays?")
+include_weekends = st.checkbox("Include weekends in schedule?")
 
 if use_typical:
     default_in = st.text_input("Typical Time In", "9:00AM")
@@ -95,11 +95,18 @@ if use_typical:
 if date_range and len(date_range) == 2:
     start_date, end_date = date_range
     current = start_date
+    
     while current <= end_date:
         st.markdown(f"**{current.strftime('%A, %m/%d/%Y')}**")
         # time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
         # time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
 
+        if not include_weekends and day_name in ["Saturday", "Sunday"]:
+            current += timedelta(days=1)
+            continue
+
+        st.markdown(f"**{day_name}, {current.strftime('%m/%d/%Y')}**")
+        
         if use_typical and current.weekday() < 5:  # Weekdays only
             time_in = default_in
             time_out = default_out
