@@ -85,6 +85,8 @@ st.caption("⏱️ Time Format: Use 12-hour (e.g., 9:00AM or 4:30PM) or 24-hour 
 
 schedule_data = []
 date_range = st.date_input("Select Date Range", [datetime.today(), datetime.today() + timedelta(days=5)])
+
+# ✅ Define checkboxes before using them
 use_typical = st.checkbox("✅ Use Typical Hours for Weekdays?")
 include_weekends = st.checkbox("Include weekends in schedule?")
 
@@ -97,10 +99,9 @@ if date_range and len(date_range) == 2:
     current = start_date
     
     while current <= end_date:
-        st.markdown(f"**{current.strftime('%A, %m/%d/%Y')}**")
-        # time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
-        # time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+        day_name = current.strftime('%A')
 
+        # ✅ This now works correctly
         if not include_weekends and day_name in ["Saturday", "Sunday"]:
             current += timedelta(days=1)
             continue
