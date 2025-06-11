@@ -166,11 +166,13 @@ if date_range and len(date_range) == 2:
             if t_in and t_out and t_out > t_in:
                 duration = get_minutes(t_in, t_out)
                 schedule_data.append({
-                    "date": current.strftime("%m/%d/%Y"),
-                    "time_in": t_in.strftime("%I:%M %p"),
-                    "time_out": t_out.strftime("%I:%M %p"),
-                    "duration": duration
-                })
+                "week": get_week_number(start_date, current),
+                "day": current.strftime("%A"),
+                "date": current.strftime("%m/%d/%Y"),
+                "time_in": t_in.strftime("%I:%M %p"),
+                "time_out": t_out.strftime("%I:%M %p"),
+                "duration": duration
+            })
             else:
                 st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
         current += timedelta(days=1)
