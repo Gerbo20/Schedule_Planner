@@ -127,6 +127,7 @@ st.caption("⏱️ Time Format: Use 12-hour (e.g., 9:00AM or 4:30PM) or 24-hour 
 # === UI Inputs ===
 
 schedule_data = []
+
 date_range = st.date_input("Select Date Range", [datetime.today(), datetime.today() + timedelta(days=5)])
 
 # ✅ Define checkboxes before using them
@@ -156,28 +157,53 @@ if date_range and len(date_range) == 2:
             time_out = default_out
             st.markdown(f"Auto-filled: {time_in} to {time_out}")
         else:
-            time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
-            time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+            # time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
+            # time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+            num_entries = st.number_input(
+                f"How many entries for {current.strftime('%m/%d/%Y')}?", 
+                min_value=1, max_value=5, value=1, step=1, key=f"entries_{current}"
+            )
+            
+            for i in range(num_entries):
+                time_in = st.text_input(f"Time In {i+1}", key=f"{current}_in_{i}")
+                time_out = st.text_input(f"Time Out {i+1}", key=f"{current}_out_{i}")
+            
+                if time_in and time_out:
+                    t_in = parse_time(time_in)
+                    t_out = parse_time(time_out)
+                    if t_in and t_out and t_out > t_in:
+                        duration = get_minutes(t_in, t_out)
+                        week_number = get_week_number(start_date, current)
+                        schedule_data.append({
+                            "week": week_number,
+                            "day": current.strftime("%A"),
+                            "date": current.strftime("%m/%d/%Y"),
+                            "time_in": t_in.strftime("%I:%M %p"),
+                            "time_out": t_out.strftime("%I:%M %p"),
+                            "duration": duration
+                        })
+                    else:
+                        st.warning(f"Invalid time entry {i+1} on {current.strftime('%m/%d/%Y')}. Time Out must be after Time In.")
 
-        if time_in and time_out:
-            t_in = parse_time(time_in)
-            t_out = parse_time(time_out)
-            if t_in and t_out and t_out > t_in:
-                if current <= end_date:
-                    duration = get_minutes(t_in, t_out)
-                    week_number = get_week_number(start_date, current)
-                    schedule_data.append({
-                        "week": week_number,
-                        "day": current.strftime("%A"),
-                        "date": current.strftime("%m/%d/%Y"),
-                        "time_in": t_in.strftime("%I:%M %p"),
-                        "time_out": t_out.strftime("%I:%M %p"),
-                        "duration": duration
-                    })
-                else:
-                    st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
-            else:
-                st.warning("Invalid time format.")
+        # if time_in and time_out:
+        #     t_in = parse_time(time_in)
+        #     t_out = parse_time(time_out)
+        #     if t_in and t_out and t_out > t_in:
+        #         if current <= end_date:
+        #             duration = get_minutes(t_in, t_out)
+        #             week_number = get_week_number(start_date, current)
+        #             schedule_data.append({
+        #                 "week": week_number,
+        #                 "day": current.strftime("%A"),
+        #                 "date": current.strftime("%m/%d/%Y"),
+        #                 "time_in": t_in.strftime("%I:%M %p"),
+        #                 "time_out": t_out.strftime("%I:%M %p"),
+        #                 "duration": duration
+        #             })
+        #         else:
+        #             st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+        #     else:
+        #         st.warning("Invalid time format.")
                 
         current += timedelta(days=1)  # ✅ end of while loop block
 
