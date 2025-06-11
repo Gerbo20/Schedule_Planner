@@ -184,16 +184,6 @@ if date_range and len(date_range) == 2:
 
 if schedule_data:
     st.success("✅ Schedule Data Collected!")
-
-    week_number = get_week_number(start_date, current)
-    schedule_data.append({
-        "week": week_number,
-        "day": current.strftime("%A"),
-        "date": current.strftime("%m/%d/%Y"),
-        "time_in": t_in.strftime("%I:%M %p"),
-        "time_out": t_out.strftime("%I:%M %p"),
-        "duration": duration
-    })
     
     week_groups = defaultdict(list)
     week_totals = defaultdict(int)
