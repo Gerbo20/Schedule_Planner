@@ -156,9 +156,14 @@ if date_range and len(date_range) == 2:
         add_another = True
 
         while add_another:
-                time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
-                time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
-        
+                # time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
+                # time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
+                col1, col2 = st.columns(2)
+                with col1:
+                    time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
+                with col2:
+                    time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
+
                 if time_in and time_out:
                     t_in = parse_time(time_in)
                     t_out = parse_time(time_out)
