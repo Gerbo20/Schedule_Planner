@@ -142,41 +142,40 @@ if date_range and len(date_range) == 2:
     current = start_date
     
     while current <= end_date:
-        day_name = current.strftime('%A')
+    day_name = current.strftime('%A')
 
-        # ✅ This now works correctly
-        if not include_weekends and day_name in ["Saturday", "Sunday"]:
-            current += timedelta(days=1)
-            continue
+    if not include_weekends and day_name in ["Saturday", "Sunday"]:
+        current += timedelta(days=1)
+        continue
 
-        st.markdown(f"**{day_name}, {current.strftime('%m/%d/%Y')}**")
-        
-        if use_typical and current.weekday() < 5:  # Weekdays only
-            time_in = default_in
-            time_out = default_out
-            st.markdown(f"Auto-filled: {time_in} to {time_out}")
-        else:
-            time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
-            time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+    st.markdown(f"**{day_name}, {current.strftime('%m/%d/%Y')}**")
 
+    if use_typical and current.weekday() < 5:
+        time_in = default_in
+        time_out = default_out
+        st.markdown(f"Auto-filled: {time_in} to {time_out}")
+    else:
+        time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
+        time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
 
-        if time_in and time_out:
-            t_in = parse_time(time_in)
-            t_out = parse_time(time_out)
-            if t_in and t_out and t_out > t_in:
-                duration = get_minutes(t_in, t_out)
-                schedule_data.append({
-                "week": get_week_number(start_date, current),
+    if time_in and time_out:
+        t_in = parse_time(time_in)
+        t_out = parse_time(time_out)
+        if t_in and t_out and t_out > t_in:
+            duration = get_minutes(t_in, t_out)
+            week_number = get_week_number(start_date, current)
+            schedule_data.append({
+                "week": week_number,
                 "day": current.strftime("%A"),
                 "date": current.strftime("%m/%d/%Y"),
                 "time_in": t_in.strftime("%I:%M %p"),
                 "time_out": t_out.strftime("%I:%M %p"),
                 "duration": duration
             })
-            else:
-                st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
-        
-    current += timedelta(days=1)
+        else:
+            st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+
+    current += timedelta(days=1)  # move this to the very end of the loop
 
 # === Output Section ===
 
