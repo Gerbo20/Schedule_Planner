@@ -138,9 +138,7 @@ if use_typical:
     default_out = st.text_input("Typical Time Out", "5:00PM")
 
 if date_range and len(date_range) == 2:
-    formatted_start = start_date.strftime('%m/%d/%Y')
-    formatted_end = end_date.strftime('%m/%d/%Y') 
-    formatted_start, formatted_end = date_range
+    start_date, end_date = date_range
     
     current = start_date
 
