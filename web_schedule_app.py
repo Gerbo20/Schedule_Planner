@@ -51,7 +51,8 @@ def generate_pdf(data):
     week_totals = defaultdict(int)
     grand_total = 0
 
-    for row in schedule_data:
+    # for row in schedule_data:
+    for row in data:
         week = row['week']
         grouped_weeks[week].append(row)
         week_totals[week] += row['duration']
