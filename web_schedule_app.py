@@ -10,7 +10,6 @@ from collections import defaultdict
 
 st.set_page_config(page_title="Schedule Planner", layout="centered")
 st.title("🗓️ Schedule Planner Web App")
-st.write("App started successfully")
 
 # === Helper Functions ===
 
@@ -152,35 +151,63 @@ if date_range and len(date_range) == 2:
 
         st.markdown(f"**{day_name}, {current.strftime('%m/%d/%Y')}**")
 
-        if use_typical and current.weekday() < 5:
-            time_in = default_in
-            time_out = default_out
-            st.markdown(f"Auto-filled: {time_in} to {time_out}")
-        else:
-            time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
-            time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+        entry_index = 1
+        add_another = True
 
-        if time_in and time_out:
-            t_in = parse_time(time_in)
-            t_out = parse_time(time_out)
-            if t_in and t_out and t_out > t_in:
-                if current <= end_date:
-                    duration = get_minutes(t_in, t_out)
-                    week_number = get_week_number(start_date, current)
-                    schedule_data.append({
-                        "week": week_number,
-                        "day": current.strftime("%A"),
-                        "date": current.strftime("%m/%d/%Y"),
-                        "time_in": t_in.strftime("%I:%M %p"),
-                        "time_out": t_out.strftime("%I:%M %p"),
-                        "duration": duration
-                    })
-                else:
-                    st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
-            else:
-                st.warning("Invalid time format.")
+        while add_another:
+                time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
+                time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
+        
+                if time_in and time_out:
+                    t_in = parse_time(time_in)
+                    t_out = parse_time(time_out)
+                    if t_in and t_out and t_out > t_in:
+                        duration = get_minutes(t_in, t_out)
+                        week_number = get_week_number(start_date, current)
+                        schedule_data.append({
+                            "week": week_number,
+                            "day": current.strftime("%A"),
+                            "date": current.strftime("%m/%d/%Y"),
+                            "time_in": t_in.strftime("%I:%M %p"),
+                            "time_out": t_out.strftime("%I:%M %p"),
+                            "duration": duration
+                        })
+                    else:
+                        st.warning(f"Invalid time entry {entry_index} on {current.strftime('%m/%d/%Y')}.")
+        
+                add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
+                entry_index += 1
+        
+            current += timedelta(days=1)
+        # if use_typical and current.weekday() < 5:
+        #     time_in = default_in
+        #     time_out = default_out
+        #     st.markdown(f"Auto-filled: {time_in} to {time_out}")
+        # else:
+        #     time_in = st.text_input(f"Time In ({current})", key=f"in_{current}")
+        #     time_out = st.text_input(f"Time Out ({current})", key=f"out_{current}")
+
+        # if time_in and time_out:
+        #     t_in = parse_time(time_in)
+        #     t_out = parse_time(time_out)
+        #     if t_in and t_out and t_out > t_in:
+        #         if current <= end_date:
+        #             duration = get_minutes(t_in, t_out)
+        #             week_number = get_week_number(start_date, current)
+        #             schedule_data.append({
+        #                 "week": week_number,
+        #                 "day": current.strftime("%A"),
+        #                 "date": current.strftime("%m/%d/%Y"),
+        #                 "time_in": t_in.strftime("%I:%M %p"),
+        #                 "time_out": t_out.strftime("%I:%M %p"),
+        #                 "duration": duration
+        #             })
+        #         else:
+        #             st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+        #     else:
+        #         st.warning("Invalid time format.")
                 
-        current += timedelta(days=1)  # ✅ end of while loop block
+        # current += timedelta(days=1)  # ✅ end of while loop block
 
 # === Output Section ===
 
@@ -220,4 +247,6 @@ if schedule_data:
 
     st.download_button("Download CSV", csv_data, file_name="schedule.csv")
     st.download_button("Download JSON", json_data, file_name="schedule.json")
+
+st.write("App started successfully")
 
