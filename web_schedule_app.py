@@ -199,30 +199,30 @@ if schedule_data:
         week_totals[row['week']] += row['duration']
         grand_total_minutes += row['duration']
 
-    # for week in sorted(week_groups.keys()):
-    #     st.markdown(f"### 🗓️ Week {week}")
-    #     table_rows = []
-    #     for r in week_groups[week]:
-    #         table_rows.append([
-    #             r['day'], r['date'], r['time_in'], r['time_out'], f"{r['duration'] // 60} hrs {r['duration'] % 60} min"
-    #         ])
-    #     st.table(table_rows)
-    #     st.info(f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min")
+    for week in sorted(week_groups.keys()):
+        st.markdown(f"### 🗓️ Week {week}")
+        table_rows = []
+        for r in week_groups[week]:
+            table_rows.append([
+                r['day'], r['date'], r['time_in'], r['time_out'], f"{r['duration'] // 60} hrs {r['duration'] % 60} min"
+            ])
+        st.table(table_rows)
+        st.info(f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min")
 
-    for week_num in sorted(grouped_weeks.keys()):
-    st.markdown(f"### 🗓️ Week {week_num}")
-    table_data = []
-    for row in grouped_weeks[week_num]:
-        table_data.append([
-            row['day'],
-            row['date'],
-            row['time_in'],
-            row['time_out'],
-            f"{row['duration'] // 60} hrs {row['duration'] % 60} min"
-        ])
-    st.table(table_data)
+    # for week_num in sorted(grouped_weeks.keys()):
+    # st.markdown(f"### 🗓️ Week {week_num}")
+    # table_data = []
+    # for row in grouped_weeks[week_num]:
+    #     table_data.append([
+    #         row['day'],
+    #         row['date'],
+    #         row['time_in'],
+    #         row['time_out'],
+    #         f"{row['duration'] // 60} hrs {row['duration'] % 60} min"
+    #     ])
+    # st.table(table_data)
     total = week_totals[week_num]
-    st.info(f"**Week {week_num} Total:** {total // 60} hrs {total % 60} min")
+    # st.info(f"**Week {week_num} Total:** {total // 60} hrs {total % 60} min")
 
     st.success(f"🧾 Final Total: {grand_total_minutes // 60} hrs {grand_total_minutes % 60} min 🕒")
 
