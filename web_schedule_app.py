@@ -162,18 +162,20 @@ if date_range and len(date_range) == 2:
             t_in = parse_time(time_in)
             t_out = parse_time(time_out)
             if t_in and t_out and t_out > t_in:
-                duration = get_minutes(t_in, t_out)
-                week_number = get_week_number(start_date, current)
-                schedule_data.append({
-                    "week": week_number,
-                    "day": current.strftime("%A"),
-                    "date": current.strftime("%m/%d/%Y"),
-                    "time_in": t_in.strftime("%I:%M %p"),
-                    "time_out": t_out.strftime("%I:%M %p"),
-                    "duration": duration
-                })
-            else:
-                st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+                if current <= end_date:
+                    duration = get_minutes(t_in, t_out)
+                    week_number = get_week_number(start_date, current)
+                    schedule_data.append({
+                        "week": week_number,
+                        "day": current.strftime("%A"),
+                        "date": current.strftime("%m/%d/%Y"),
+                        "time_in": t_in.strftime("%I:%M %p"),
+                        "time_out": t_out.strftime("%I:%M %p"),
+                        "duration": duration
+                    })
+        
+                    else:
+                        st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
 
         current += timedelta(days=1)  # ✅ end of while loop block
 
