@@ -138,7 +138,7 @@ if use_typical:
     default_out = st.text_input("Typical Time Out", "5:00PM")
 
 if date_range and len(date_range) == 2:
-    start_date, end_date = date_range
+    start_date.strftime('%m/%d/%Y'), end_date..strftime('%m/%d/%Y') = date_range
     
     # 📅 Display date range in MM/DD/YYYY format
     formatted_range = f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
