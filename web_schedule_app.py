@@ -178,7 +178,7 @@ if date_range and len(date_range) == 2:
                 add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
                 entry_index += 1
         
-            current += timedelta(days=1)
+        current += timedelta(days=1)
         # if use_typical and current.weekday() < 5:
         #     time_in = default_in
         #     time_out = default_out
