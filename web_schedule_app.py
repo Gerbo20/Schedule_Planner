@@ -47,11 +47,12 @@ def generate_pdf(data):
     pdf.set_font("Arial", "", 12)
     pdf.ln(5)
 
+    # Group data by week
     grouped_weeks = defaultdict(list)
     week_totals = defaultdict(int)
     grand_total = 0
 
-    for row in data:
+    for row in schedule_data:
         week = row['week']
         grouped_weeks[week].append(row)
         week_totals[week] += row['duration']
@@ -83,9 +84,11 @@ def generate_pdf(data):
         pdf.cell(0, 10, total_str, ln=True)
         pdf.ln(4)
 
-    # Proper in-memory PDF output
+    # Final Total
     pdf.set_font("Arial", "B", 12)
     pdf.cell(0, 10, f"FINAL TOTAL: {grand_total // 60} hrs {grand_total % 60} min", ln=True, align='C')
+    
+    # Proper in-memory PDF output
     pdf_bytes = pdf.output(dest='S').encode('latin1') # <- Important fix
     return BytesIO(pdf_bytes)
 
@@ -177,6 +180,16 @@ if date_range and len(date_range) == 2:
 if schedule_data:
     st.success("✅ Schedule Data Collected!")
 
+    week_number = get_week_number(start_date, current)
+    schedule_data.append({
+        "week": week_number,
+        "day": current.strftime("%A"),
+        "date": current.strftime("%m/%d/%Y"),
+        "time_in": t_in.strftime("%I:%M %p"),
+        "time_out": t_out.strftime("%I:%M %p"),
+        "duration": duration
+    })
+    
     week_groups = defaultdict(list)
     week_totals = defaultdict(int)
     grand_total_minutes = 0
@@ -195,6 +208,21 @@ if schedule_data:
             ])
         st.table(table_rows)
         st.info(f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min")
+
+    for week_num in sorted(grouped_weeks.keys()):
+    st.markdown(f"### 🗓️ Week {week_num}")
+    table_data = []
+    for row in grouped_weeks[week_num]:
+        table_data.append([
+            row['day'],
+            row['date'],
+            row['time_in'],
+            row['time_out'],
+            f"{row['duration'] // 60} hrs {row['duration'] % 60} min"
+        ])
+    st.table(table_data)
+    total = week_totals[week_num]
+    st.info(f"**Week {week_num} Total:** {total // 60} hrs {total % 60} min")
 
     st.success(f"🧾 Final Total: {grand_total_minutes // 60} hrs {grand_total_minutes % 60} min 🕒")
 
