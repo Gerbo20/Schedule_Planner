@@ -160,7 +160,7 @@ if date_range and len(date_range) == 2:
                 # time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
                 col1, col2 = st.columns(2)
             
-                 if use_typical and current.weekday() < 5 and entry_index == 1:
+                if use_typical and current.weekday() < 5 and entry_index == 1:
                     time_in = default_in
                     time_out = default_out
                     st.markdown(f"Auto-filled: {time_in} to {time_out}")
