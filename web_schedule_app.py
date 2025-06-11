@@ -6,6 +6,7 @@ import csv
 import json
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
+from collections import defaultdict
 
 st.set_page_config(page_title="Schedule Planner", layout="centered")
 st.title("🗓️ Schedule Planner Web App")
@@ -32,7 +33,12 @@ def parse_time(time_str):
 def get_minutes(start, end):
     delta = end - start
     return max(0, int(delta.total_seconds() // 60))
-
+    
+def get_week_number(start_date, current_date):
+    start_sunday = start_date - timedelta(days=start_date.weekday() + 1 if start_date.weekday() != 6 else 0)
+    current_sunday = current_date - timedelta(days=current_date.weekday() + 1 if current_date.weekday() != 6 else 0)
+    return ((current_sunday - start_sunday).days // 7) + 1
+    
 def generate_pdf(data):
     pdf = FPDF()
     pdf.add_page()
@@ -41,12 +47,46 @@ def generate_pdf(data):
     pdf.set_font("Arial", "", 12)
     pdf.ln(5)
 
+    grouped_weeks = defaultdict(list)
+    week_totals = defaultdict(int)
+    grand_total = 0
+
     for row in data:
-        line = f"{row['date']} - {row['time_in']} to {row['time_out']} = {row['duration']} minutes"
-        pdf.cell(0, 10, line, ln=True)
+        week = row['week']
+        grouped_weeks[week].append(row)
+        week_totals[week] += row['duration']
+        grand_total += row['duration']
+
+    for week_num in sorted(grouped_weeks):
+        pdf.set_font("Arial", "B", 14)
+        pdf.cell(0, 10, f"Week {week_num}", ln=True)
+        pdf.set_font("Arial", "B", 12)
+        pdf.cell(30, 10, "Day", 1)
+        pdf.cell(30, 10, "Date", 1)
+        pdf.cell(40, 10, "Time In", 1)
+        pdf.cell(40, 10, "Time Out", 1)
+        pdf.cell(50, 10, "Duration", 1)
+        pdf.ln()
+
+        pdf.set_font("Arial", "", 11)
+        for row in grouped_weeks[week_num]:
+            pdf.cell(30, 10, row['day'], 1)
+            pdf.cell(30, 10, row['date'], 1)
+            pdf.cell(40, 10, row['time_in'], 1)
+            pdf.cell(40, 10, row['time_out'], 1)
+            duration = f"{row['duration'] // 60} hrs {row['duration'] % 60} min"
+            pdf.cell(50, 10, duration, 1)
+            pdf.ln()
+
+        week_total = week_totals[week_num]
+        total_str = f"Week {week_num} Total: {week_total // 60} hrs {week_total % 60} min"
+        pdf.cell(0, 10, total_str, ln=True)
+        pdf.ln(4)
 
     # Proper in-memory PDF output
-    pdf_bytes = pdf.output(dest='S').encode('latin1')  # <- Important fix
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(0, 10, f"FINAL TOTAL: {grand_total // 60} hrs {grand_total % 60} min", ln=True, align='C')
+    pdf_bytes = pdf.output(dest='S').encode('latin1') # <- Important fix
     return BytesIO(pdf_bytes)
 
 def generate_excel(data):
@@ -137,10 +177,26 @@ if date_range and len(date_range) == 2:
 if schedule_data:
     st.success("✅ Schedule Data Collected!")
 
-    total_minutes = sum(row['duration'] for row in schedule_data)
-    hours = total_minutes // 60
-    minutes = total_minutes % 60
-    st.info(f"🕒 Total Time Worked: {hours} hrs {minutes} min")
+    week_groups = defaultdict(list)
+    week_totals = defaultdict(int)
+    grand_total_minutes = 0
+
+    for row in schedule_data:
+        week_groups[row['week']].append(row)
+        week_totals[row['week']] += row['duration']
+        grand_total_minutes += row['duration']
+
+    for week in sorted(week_groups.keys()):
+        st.markdown(f"### 🗓️ Week {week}")
+        table_rows = []
+        for r in week_groups[week]:
+            table_rows.append([
+                r['day'], r['date'], r['time_in'], r['time_out'], f"{r['duration'] // 60} hrs {r['duration'] % 60} min"
+            ])
+        st.table(table_rows)
+        st.info(f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min")
+
+    st.success(f"🧾 Final Total: {grand_total_minutes // 60} hrs {grand_total_minutes % 60} min 🕒")
 
     pdf_data = generate_pdf(schedule_data)
     excel_data = generate_excel(schedule_data)
