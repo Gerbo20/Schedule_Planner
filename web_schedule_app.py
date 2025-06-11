@@ -173,10 +173,11 @@ if date_range and len(date_range) == 2:
                         "time_out": t_out.strftime("%I:%M %p"),
                         "duration": duration
                     })
-        
-                    else:
-                        st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
-
+                else:
+                    st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+            else:
+                st.warning("Invalid time format.")
+                
         current += timedelta(days=1)  # ✅ end of while loop block
 
 # === Output Section ===
