@@ -175,6 +175,7 @@ if date_range and len(date_range) == 2:
             })
             else:
                 st.warning(f"Invalid times on {current}. Must be valid and Time Out after Time In.")
+        
         current += timedelta(days=1)
 
 # === Output Section ===
