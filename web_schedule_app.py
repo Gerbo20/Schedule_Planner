@@ -139,7 +139,7 @@ if use_typical:
 
 if date_range and len(date_range) == 2:
     formatted_start = start_date.strftime('%m/%d/%Y')
-    formatted_end = end_date..strftime('%m/%d/%Y') 
+    formatted_end = end_date.strftime('%m/%d/%Y') 
     formatted_start, formatted_end = date_range
     
     current = start_date
