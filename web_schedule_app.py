@@ -131,7 +131,7 @@ schedule_data = []
 date_range = st.date_input("Select Date Range", [datetime.today(), datetime.today() + timedelta(days=5)])
 
 # ✅ Define checkboxes before using them
-use_typical = st.checkbox("✅ Use Typical Hours for Weekdays?")
+use_typical = st.checkbox("Use Typical Hours for Weekdays?")
 include_weekends = st.checkbox("Include weekends in schedule?")
 
 if use_typical:
