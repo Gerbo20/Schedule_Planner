@@ -200,7 +200,7 @@ if schedule_data:
         grand_total_minutes += row['duration']
 
     for week in sorted(week_groups.keys()):
-        st.markdown(f"### 🗓️ Week {week}")
+        # st.markdown(f"### 🗓️ Week {week}")
         table_rows = []
         for r in week_groups[week]:
             table_rows.append([
