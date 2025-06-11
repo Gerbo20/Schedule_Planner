@@ -139,6 +139,11 @@ if use_typical:
 
 if date_range and len(date_range) == 2:
     start_date, end_date = date_range
+    
+    # 📅 Display date range in MM/DD/YYYY format
+    formatted_range = f"{start_date.strftime('%m/%d/%Y')} – {end_date.strftime('%m/%d/%Y')}"
+    st.markdown(f"📅 **Selected Date Range:** {formatted_range}")
+    
     current = start_date
 
     while current <= end_date:
