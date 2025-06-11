@@ -159,11 +159,19 @@ if date_range and len(date_range) == 2:
                 # time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
                 # time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
                 col1, col2 = st.columns(2)
-                with col1:
-                    time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
-                with col2:
-                    time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
+            
+                 if use_typical and current.weekday() < 5 and entry_index == 1:
+                    time_in = default_in
+                    time_out = default_out
+                    st.markdown(f"Auto-filled: {time_in} to {time_out}")
+                else:
+                    
+                    with col1:
+                        time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
+                    with col2:
+                        time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
 
+                # Only record entries with valid times
                 if time_in and time_out:
                     t_in = parse_time(time_in)
                     t_out = parse_time(time_out)
@@ -178,10 +186,15 @@ if date_range and len(date_range) == 2:
                             "time_out": t_out.strftime("%I:%M %p"),
                             "duration": duration
                         })
+                        
+                        # Show checkbox for adding another only if current entry is valid
+                        add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
                     else:
                         st.warning(f"Invalid time entry {entry_index} on {current.strftime('%m/%d/%Y')}.")
-        
-                add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
+                        add_another = False
+                else:
+                    add_another = False
+                
                 entry_index += 1
         
         current += timedelta(days=1)
