@@ -223,7 +223,7 @@ if schedule_data:
     #         f"{row['duration'] // 60} hrs {row['duration'] % 60} min"
     #     ])
     # st.table(table_data)
-    total = week_totals[week_num]
+    total = week_totals[week]
     # st.info(f"**Week {week_num} Total:** {total // 60} hrs {total % 60} min")
 
     st.success(f"🧾 Final Total: {grand_total_minutes // 60} hrs {grand_total_minutes % 60} min 🕒")
