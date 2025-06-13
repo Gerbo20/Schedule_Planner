@@ -134,9 +134,13 @@ date_range = st.date_input("Select Date Range", [datetime.today(), datetime.toda
 use_typical = st.checkbox("Use Typical Hours for Weekdays?")
 include_weekends = st.checkbox("Include weekends in schedule?")
 
+col1, col2 = st.columns(2)
+
 if use_typical:
-    default_in = st.text_input("Typical Time In", "9:00AM")
-    default_out = st.text_input("Typical Time Out", "5:00PM")
+    with col1:
+        default_in = st.text_input("Typical Time In", "9:00AM")
+    with col2:
+        default_out = st.text_input("Typical Time Out", "5:00PM")
 
 if date_range and len(date_range) == 2:
     start_date, end_date = date_range
