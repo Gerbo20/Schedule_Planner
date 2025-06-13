@@ -195,7 +195,7 @@ if date_range and len(date_range) == 2:
                             st.warning(f"Invalid time entry {entry_index} on {current.strftime('%m/%d/%Y')}.")
                             add_another = False
                     else:
-                    add_another = False
+                        add_another = False
     
             entry_index += 1
                 # else:
