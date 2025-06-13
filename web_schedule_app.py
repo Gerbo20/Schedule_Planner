@@ -172,12 +172,27 @@ if date_range and len(date_range) == 2:
                         st.text_input("Auto-filled Time In", value=time_in, key=f"in_{current}_{entry_index}", disabled=True)
                     with col2:
                         st.text_input("Auto-filled Time Out", value=time_out, key=f"out_{current}_{entry_index}", disabled=True)
-                else:
+
+                # Save auto-filled values only once
+                t_in = parse_time(default_in)
+                t_out = parse_time(default_out)
+                if t_in and t_out and t_out > t_in:
+                    duration = get_minutes(t_in, t_out)
+                    week_number = get_week_number(start_date, current)
+                    schedule_data.append({
+                        "week": week_number,
+                        "day": current.strftime("%A"),
+                        "date": current.strftime("%m/%d/%Y"),
+                        "time_in": t_in.strftime("%I:%M %p"),
+                        "time_out": t_out.strftime("%I:%M %p"),
+                        "duration": duration
+                    })
+                # else:
                     
-                    with col1:
-                        time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
-                    with col2:
-                        time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
+                #     with col1:
+                #         time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
+                #     with col2:
+                #         time_out = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
 
                 # Only record entries with valid times
                 if time_in and time_out:
