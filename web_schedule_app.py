@@ -78,7 +78,7 @@ def generate_pdf(data):
             pdf.cell(50, 10, duration_str, 1)
             pdf.ln()
 
-        week_total = week_totals[week_num]
+        week_total = week_totals[week]
         total_str = f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min"
         pdf.cell(0, 10, total_str, ln=True)
         pdf.ln(3)
@@ -133,6 +133,11 @@ if date_range and len(date_range) == 2:
     current = start_date
 
     while current <= end_date:
+        weekday = current.weekday()
+        if not include_weekends and weekday >= 5:
+            current += timedelta(days=1)
+            continue
+            
         st.markdown(f"### {current.strftime('%A, %m/%d/%Y')}")
         entry_index = 1
         add_another = True
@@ -153,6 +158,7 @@ if date_range and len(date_range) == 2:
                 with col2:
                     time_out_str = st.text_input(f"Time Out ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"out_{current}_{entry_index}")
 
+            valid_entry = False
             if time_in_str and time_out_str:
                 t_in = parse_time(time_in_str)
                 t_out = parse_time(time_out_str)
@@ -167,15 +173,15 @@ if date_range and len(date_range) == 2:
                         "time_out": t_out.strftime("%I:%M %p"),
                         "duration": duration
                     })
-                    add_another = st.checkbox(
-                        f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", 
-                        key=f"add_more_{current}_{entry_index}"
-                    )
+                    valid_entry = True
                 else:
                     st.warning(f"Invalid or reversed times for entry {entry_index}.")
-                    add_another = False
-            else:
-                add_another = False
+            
+            # Always show this, even if entry was invalid
+            add_another = st.checkbox(
+                f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", 
+                key=f"add_more_{current}_{entry_index}"
+            )
 
             entry_index += 1
         current += timedelta(days=1)
