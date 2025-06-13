@@ -167,7 +167,11 @@ if date_range and len(date_range) == 2:
                 if use_typical and current.weekday() < 5 and entry_index == 1:
                     time_in = default_in
                     time_out = default_out
-                    st.markdown(f"Auto-filled: {time_in} to {time_out}")
+                    # st.markdown(f"Auto-filled: {time_in} to {time_out}")
+                    with col1:
+                        st.text_input("Auto-filled Time In", value=time_in, key=f"in_{current}_{entry_index}", disabled=True)
+                    with col2:
+                        st.text_input("Auto-filled Time Out", value=time_out, key=f"out_{current}_{entry_index}", disabled=True)
                 else:
                     
                     with col1:
