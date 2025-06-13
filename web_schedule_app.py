@@ -159,7 +159,7 @@ if date_range and len(date_range) == 2:
         entry_index = 1
         add_another = True
         
-        add_extra = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"extra_checkbox_{current}")
+        #add_extra = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"extra_checkbox_{current}")
 
         while add_another:
                 # time_in = st.text_input(f"Time In ({entry_index}) - {current.strftime('%m/%d/%Y')}", key=f"in_{current}_{entry_index}")
@@ -170,34 +170,35 @@ if date_range and len(date_range) == 2:
                     time_in = default_in
                     time_out = default_out
                     # st.markdown(f"Auto-filled: {time_in} to {time_out}")
+                else:
                     with col1:
                         st.text_input("Auto-filled Time In", value=time_in, key=f"in_{current}_{entry_index}", disabled=True)
                     with col2:
                         st.text_input("Auto-filled Time Out", value=time_out, key=f"out_{current}_{entry_index}", disabled=True)
 
-                    # Save auto-filled values only once
-                    if time_in and time_out:
-                        t_in = parse_time(default_in)
-                        t_out = parse_time(default_out)
-                        if t_in and t_out and t_out > t_in:
-                            duration = get_minutes(t_in, t_out)
-                            week_number = get_week_number(start_date, current)
-                            schedule_data.append({
-                                "week": week_number,
-                                "day": current.strftime("%A"),
-                                "date": current.strftime("%m/%d/%Y"),
-                                "time_in": t_in.strftime("%I:%M %p"),
-                                "time_out": t_out.strftime("%I:%M %p"),
-                                "duration": duration
-                            })
-                            add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
-                        else:
-                            st.warning(f"Invalid time entry {entry_index} on {current.strftime('%m/%d/%Y')}.")
-                            add_another = False
+                # Save auto-filled values only once
+                if default_in and default_out:
+                    t_in = parse_time(default_in)
+                    t_out = parse_time(default_out)
+                    if t_in and t_out and t_out > t_in:
+                        duration = get_minutes(t_in, t_out)
+                        week_number = get_week_number(start_date, current)
+                        schedule_data.append({
+                            "week": week_number,
+                            "day": current.strftime("%A"),
+                            "date": current.strftime("%m/%d/%Y"),
+                            "time_in": t_in.strftime("%I:%M %p"),
+                            "time_out": t_out.strftime("%I:%M %p"),
+                            "duration": duration
+                        })
+                        add_another = st.checkbox(f"➕ Add another entry for {current.strftime('%m/%d/%Y')}?", key=f"another_{current}_{entry_index}")
                     else:
+                        st.warning(f"Invalid time entry {entry_index} on {current.strftime('%m/%d/%Y')}.")
                         add_another = False
+                else:
+                    add_another = False
     
-            entry_index += 1
+                entry_index += 1
                 # else:
                     
                 #     with col1:
