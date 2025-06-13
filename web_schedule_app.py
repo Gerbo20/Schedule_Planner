@@ -19,8 +19,16 @@ def parse_time(time_str):
         try:
             return datetime.strptime(time_str, fmt)
         except:
-            continue
-    return None
+            pass
+        try:
+            return datetime.strptime(time_str, "%I:%M%p")
+        except:
+            pass
+        try:
+            return datetime.strptime(time_str, "%H:%M")
+        except:
+            pass
+        return None
 
 def get_minutes(start, end):
     delta = end - start
@@ -70,6 +78,7 @@ def generate_pdf(data):
             pdf.cell(50, 10, duration_str, 1)
             pdf.ln()
 
+        week_total = week_totals[week_num]
         total_str = f"Week {week} Total: {week_totals[week] // 60} hrs {week_totals[week] % 60} min"
         pdf.cell(0, 10, total_str, ln=True)
         pdf.ln(3)
@@ -79,31 +88,31 @@ def generate_pdf(data):
     pdf.cell(0, 10, final_str, ln=True, align='C')
     return BytesIO(pdf.output(dest="S").encode('latin1'))
 
-def generate_excel(data):
-    wb = Workbook()
-    ws = wb.active
-    ws.append(["Date", "Time In", "Time Out", "Minutes Worked"])
-    for row in data:
-        ws.append([row["date"], row["time_in"], row["time_out"], row["duration"]])
-    buffer = BytesIO()
-    wb.save(buffer)
-    buffer.seek(0)
-    return buffer
+# def generate_excel(data):
+#     wb = Workbook()
+#     ws = wb.active
+#     ws.append(["Date", "Time In", "Time Out", "Minutes Worked"])
+#     for row in data:
+#         ws.append([row["date"], row["time_in"], row["time_out"], row["duration"]])
+#     buffer = BytesIO()
+#     wb.save(buffer)
+#     buffer.seek(0)
+#     return buffer
 
-def generate_csv(data):
-    buffer = BytesIO()
-    buffer.write("Date,Time In,Time Out,Minutes Worked\n".encode('utf-8'))
-    for row in data:
-        line = f"{row['date']},{row['time_in']},{row['time_out']},{row['duration']}\n"
-        buffer.write(line.encode('utf-8'))
-    buffer.seek(0)
-    return buffer
+# def generate_csv(data):
+#     buffer = BytesIO()
+#     buffer.write("Date,Time In,Time Out,Minutes Worked\n".encode('utf-8'))
+#     for row in data:
+#         line = f"{row['date']},{row['time_in']},{row['time_out']},{row['duration']}\n"
+#         buffer.write(line.encode('utf-8'))
+#     buffer.seek(0)
+#     return buffer
 
-def generate_json(data):
-    buffer = BytesIO()
-    buffer.write(json.dumps(data, indent=2).encode('utf-8'))
-    buffer.seek(0)
-    return buffer
+# def generate_json(data):
+#     buffer = BytesIO()
+#     buffer.write(json.dumps(data, indent=2).encode('utf-8'))
+#     buffer.seek(0)
+#     return buffer
 
 # === UI Form Logic ===
 
