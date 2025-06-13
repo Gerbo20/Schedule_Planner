@@ -172,9 +172,9 @@ if date_range and len(date_range) == 2:
                     # st.markdown(f"Auto-filled: {time_in} to {time_out}")
                 else:
                     with col1:
-                        st.text_input("Auto-filled Time In", value=time_in, key=f"in_{current}_{entry_index}", disabled=True)
+                        st.text_input("Auto-filled Time In", value=default_in, key=f"in_{current}_{entry_index}", disabled=True)
                     with col2:
-                        st.text_input("Auto-filled Time Out", value=time_out, key=f"out_{current}_{entry_index}", disabled=True)
+                        st.text_input("Auto-filled Time Out", value=default_out, key=f"out_{current}_{entry_index}", disabled=True)
 
                 # Save auto-filled values only once
                 if default_in and default_out:
